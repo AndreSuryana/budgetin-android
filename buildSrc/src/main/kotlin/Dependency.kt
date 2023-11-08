@@ -4,6 +4,7 @@ object Dependency {
 
     const val coreKtx = "androidx.core:core-ktx:${Version.coreKtx}"
     const val lifecycle = "androidx.lifecycle:lifecycle-runtime-compose:${Version.lifecycle}"
+    const val activityCompose = "androidx.activity:activity-compose:${Version.activityCompose}"
 
     const val composeBom = "androidx.compose:compose-bom:${Version.composeBom}"
     const val composeUi = "androidx.compose.ui:ui"
@@ -19,8 +20,11 @@ object Dependency {
     const val jUnitAndroid = "androidx.test.ext:junit:${Version.jUnitAndroidTest}"
     const val espresso = "androidx.test.espresso:espresso-core:${Version.espresso}"
 
+    const val navigation = "androidx.navigation:navigation-compose:${Version.navigation}"
+
     const val hilt = "com.google.dagger:hilt-android:${Version.hilt}"
     const val hiltCompiler = "com.google.dagger:hilt-compiler:${Version.hilt}"
+    const val hiltNavigation = "androidx.hilt:hilt-navigation-compose:${Version.hiltNavigation}"
 
     const val room = "androidx.room:room-runtime:${Version.room}"
     const val roomKtx = "androidx.room:room-ktx:${Version.room}"
@@ -37,7 +41,8 @@ object Dependency {
 fun DependencyHandler.android() {
     implementation(
         Dependency.coreKtx,
-        Dependency.lifecycle
+        Dependency.lifecycle,
+        Dependency.activityCompose
     )
 }
 
@@ -61,8 +66,23 @@ fun DependencyHandler.compose() {
     )
 }
 
+fun DependencyHandler.testing() {
+    implementation(
+        Dependency.jUnit,
+        Dependency.jUnitAndroid,
+        Dependency.espresso
+    )
+}
+
+fun DependencyHandler.navigation() {
+    implementation(Dependency.navigation)
+}
+
 fun DependencyHandler.hilt() {
-    implementation(Dependency.hilt)
+    implementation(
+        Dependency.hilt,
+        Dependency.hiltNavigation
+        )
     kapt(Dependency.hiltCompiler)
 }
 
