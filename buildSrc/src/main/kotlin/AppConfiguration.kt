@@ -26,11 +26,8 @@ fun configureDefaultConfig(
     onAdditionalConfig: ((DefaultConfig) -> Unit)? = null
 ) {
     defaultConfig.apply {
-        applicationId = AppConfiguration.applicationId
         minSdk = AppConfiguration.minSdk
         targetSdk = AppConfiguration.targetSdk
-        versionCode = AppConfiguration.versionCode
-        versionName = AppConfiguration.versionName
     }
 
     onAdditionalConfig?.invoke(defaultConfig)

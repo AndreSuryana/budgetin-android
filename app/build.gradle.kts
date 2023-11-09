@@ -11,6 +11,11 @@ android {
 
     configureDefaultConfig(defaultConfig) {
         it.apply {
+            applicationId = AppConfiguration.applicationId
+
+            versionCode = AppConfiguration.versionCode
+            versionName = AppConfiguration.versionName
+
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
             vectorDrawables {
                 useSupportLibrary = true
