@@ -5,6 +5,11 @@ plugins {
 
 android {
     namespace = "com.andresuryana.budgetin.core.datastore"
+    compileSdk = AppConfiguration.compileSdk
+
+    configureDefaultConfig(defaultConfig)
+
+    configureJvmVersion(compileOptions, kotlinOptions, kotlin)
 }
 
 dependencies {

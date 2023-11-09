@@ -5,6 +5,13 @@ plugins {
 
 android {
     namespace = "com.andresuryana.budgetin.core.ui"
+    compileSdk = AppConfiguration.compileSdk
+
+    configureDefaultConfig(defaultConfig)
+
+    configureJvmVersion(compileOptions, kotlinOptions, kotlin)
+
+    configureCompose(buildFeatures, composeOptions)
 }
 
 dependencies {

@@ -9,18 +9,18 @@ android {
     namespace = "com.andresuryana.budgetin"
     compileSdk = AppConfiguration.compileSdk
 
-    defaultConfig {
-        applicationId = AppConfiguration.applicationId
-        minSdk = AppConfiguration.minSdk
-        targetSdk = AppConfiguration.targetSdk
-        versionCode = AppConfiguration.versionCode
-        versionName = AppConfiguration.versionName
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
+    configureDefaultConfig(defaultConfig) {
+        it.apply {
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+            vectorDrawables {
+                useSupportLibrary = true
+            }
         }
     }
+
+    configureJvmVersion(compileOptions, kotlinOptions, kotlin)
+
+    configureCompose(buildFeatures, composeOptions)
 
     buildTypes {
         release {
@@ -31,23 +31,9 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+
+    hilt {
+        enableAggregatingTask = false
     }
 }
 

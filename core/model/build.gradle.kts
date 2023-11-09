@@ -5,6 +5,11 @@ plugins {
 
 android {
     namespace = "com.andresuryana.budgetin.core.model"
+    compileSdk = AppConfiguration.compileSdk
+
+    configureDefaultConfig(defaultConfig)
+
+    configureJvmVersion(compileOptions, kotlinOptions, kotlin)
 }
 
 dependencies {

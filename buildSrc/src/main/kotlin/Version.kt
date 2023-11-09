@@ -1,13 +1,14 @@
 object Version {
 
-    const val androidApplication = "8.1.2"
-    const val androidLibrary = "8.1.2"
     const val kotlin = "1.9.10"
 
     const val coreKtx = "1.9.0"
     const val lifecycle = "2.6.2"
     const val activityCompose = "1.8.0"
 
+    // Compose version should matched with the compatible kotlin version
+    // See: https://developer.android.com/jetpack/androidx/releases/compose-kotlin#pre-release_kotlin_compatibility
+    const val composeVersion = "1.5.3"
     const val composeBom = "2023.03.00"
 
     const val navigation = "2.7.5"
