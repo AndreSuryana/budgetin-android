@@ -1,4 +1,4 @@
-package com.andresuryana.notification
+package com.andresuryana.budgetin.feature.notification
 
 import org.junit.Test
 

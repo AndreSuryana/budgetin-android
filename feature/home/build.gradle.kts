@@ -20,4 +20,5 @@ dependencies {
     compose()
     testing()
     navigation()
+    hilt()
 }

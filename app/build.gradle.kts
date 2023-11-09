@@ -44,6 +44,14 @@ android {
 
 dependencies {
 
+    ui()
+
+    home()
+    search()
+    statistic()
+    notification()
+    setting()
+
     android()
     compose()
     navigation()

@@ -1,4 +1,4 @@
-package com.andresuryana.budgetin.feature.search
+package com.andresuryana.budgetin.feature.notification
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,15 +11,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-internal fun SearchRoute(
+internal fun NotificationRoute(
     modifier: Modifier = Modifier,
-    viewModel: SearchViewModel = hiltViewModel()
+    viewModel: NotificationViewModel = hiltViewModel()
 ) {
-    SearchScreen(modifier = modifier)
+    NotificationScreen(
+        modifier = modifier
+    )
 }
 
 @Composable
-internal fun SearchScreen(
+internal fun NotificationScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -27,12 +29,12 @@ internal fun SearchScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Search")
+        Text(text = "Notification")
     }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SearchScreenPreview() {
-    SearchScreen()
+fun NotificationScreenPreview() {
+    NotificationScreen()
 }

@@ -1,4 +1,4 @@
-package com.andresuryana.budgetin.ui.theme
+package com.andresuryana.budgetin.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
