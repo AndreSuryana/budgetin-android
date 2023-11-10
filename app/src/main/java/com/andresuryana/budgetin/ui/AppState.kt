@@ -15,6 +15,7 @@ import com.andresuryana.budgetin.feature.notification.navigation.notificationRou
 import com.andresuryana.budgetin.feature.search.navigation.navigateToSearch
 import com.andresuryana.budgetin.feature.setting.navigation.navigateToSetting
 import com.andresuryana.budgetin.feature.setting.navigation.settingRoute
+import com.andresuryana.budgetin.feature.statistic.navigation.navigateToStatistic
 import com.andresuryana.budgetin.feature.statistic.navigation.statisticRoute
 import com.andresuryana.budgetin.navigation.MainDestination
 import com.andresuryana.budgetin.navigation.MainDestination.HOME
@@ -43,13 +44,17 @@ class AppState(val navController: NavHostController) {
             else -> null
         }
 
+    val mainDestinations: List<MainDestination> = MainDestination.values().asList()
+
+    val isShowNavigationBar: Boolean
+        @Composable get() = currentMainDestination != null
 
     /**
      * Navigation logic for main destination in the application. Main destinations should
      * only have one copy of the destination in the back stack, and restore state whenever we
      * navigate to and from it.
      */
-    fun navigateTo(destination: MainDestination) {
+    fun navigateToMainDestination(destination: MainDestination) {
         val options = navOptions {
             // Pop up to start destination to avoid multiple stacks of destination
             // on the back stack.
@@ -66,7 +71,7 @@ class AppState(val navController: NavHostController) {
 
         when (destination) {
             HOME -> navController.navigateToHome(options)
-            STATISTIC -> navController.navigateToSearch(options)
+            STATISTIC -> navController.navigateToStatistic(options)
             NOTIFICATION -> navController.navigateToNotification(options)
             SETTING -> navController.navigateToSetting(options)
         }
