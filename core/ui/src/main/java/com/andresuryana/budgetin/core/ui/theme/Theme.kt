@@ -20,7 +20,8 @@ private val darkColorScheme = darkColorScheme(
 )
 
 private val lightColorScheme = lightColorScheme(
-    primary = Blue
+    primary = Blue,
+    surfaceVariant = DarkBlue
 )
 
 @Composable
@@ -36,7 +37,7 @@ fun BudgetinTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> darkColorScheme
+        darkTheme -> lightColorScheme // darkColorScheme
         else -> lightColorScheme
     }
     val view = LocalView.current
