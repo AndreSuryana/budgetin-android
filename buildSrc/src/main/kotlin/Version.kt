@@ -10,6 +10,7 @@ object Version {
     // See: https://developer.android.com/jetpack/androidx/releases/compose-kotlin#pre-release_kotlin_compatibility
     const val composeVersion = "1.5.3"
     const val composeBom = "2023.03.00"
+    const val composeMaterial3 = "1.2.0-alpha10"
 
     const val navigation = "2.7.5"
 

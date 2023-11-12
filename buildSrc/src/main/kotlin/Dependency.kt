@@ -10,7 +10,7 @@ object Dependency {
     const val composeUi = "androidx.compose.ui:ui"
     const val composeUiGraphics = "androidx.compose.ui:ui-graphics"
     const val composePreviewTool = "androidx.compose.ui:ui-tooling-preview"
-    const val composeM3 = "androidx.compose.material3:material3"
+    const val composeM3 = "androidx.compose.material3:material3:${Version.composeMaterial3}"
 
     const val composeJUnit = "androidx.compose.ui:ui-test-junit4"
     const val composeUiTool = "androidx.compose.ui:ui-tooling"
