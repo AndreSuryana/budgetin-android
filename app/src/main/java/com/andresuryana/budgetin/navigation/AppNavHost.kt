@@ -23,7 +23,7 @@ fun AppNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        homeScreen(onSearchClicked = { state.navigateToSearch() })
+        homeScreen()
         statisticScreen()
         notificationScreen()
         settingScreen()
