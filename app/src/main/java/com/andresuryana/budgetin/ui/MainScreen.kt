@@ -1,5 +1,6 @@
 package com.andresuryana.budgetin.ui
 
+import android.icu.util.Calendar
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.Spring
@@ -18,7 +19,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,6 +33,8 @@ import com.andresuryana.budgetin.core.ui.component.BudgetinLogoAppBar
 import com.andresuryana.budgetin.core.ui.component.BudgetinNavigationBar
 import com.andresuryana.budgetin.core.ui.component.BudgetinNavigationItem
 import com.andresuryana.budgetin.core.ui.component.BudgetinTitleAppBar
+import com.andresuryana.budgetin.core.ui.component.TimeFilterBottomSheet
+import com.andresuryana.budgetin.core.ui.component.TimeFilterDropdown
 import com.andresuryana.budgetin.navigation.AppNavHost
 import com.andresuryana.budgetin.navigation.MainDestination
 import com.andresuryana.budgetin.navigation.MainDestination.HOME
@@ -40,7 +47,7 @@ fun MainScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        contentWindowInsets = WindowInsets(0, 0, 0, 10),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             AnimatedVisibility(
@@ -80,7 +87,48 @@ fun MainScreen(
                         BudgetinTitleAppBar(
                             title = stringResource(destination.titleRes),
                             trailingIcon = {
-                                // TODO: Dropdown here!
+                                val months = listOf(
+                                    "January",
+                                    "February",
+                                    "March",
+                                    "April",
+                                    "May",
+                                    "June",
+                                    "July",
+                                    "August",
+                                    "September",
+                                    "October",
+                                    "November",
+                                    "December"
+                                )
+                                var selectedMonth by rememberSaveable {
+                                    mutableStateOf(
+                                        months[Calendar.getInstance().get(Calendar.MONTH)]
+                                    )
+                                }
+
+                                var expanded by rememberSaveable { mutableStateOf(false) }
+
+                                TimeFilterDropdown(
+                                    text = selectedMonth,
+                                    expanded = expanded,
+                                    onExpanded = {
+                                        expanded = !expanded
+                                    }
+                                )
+
+                                if (expanded) {
+                                    TimeFilterBottomSheet(
+                                        title = "Select month",
+                                        items = months,
+                                        selectedItem = selectedMonth,
+                                        onDismiss = { expanded = false },
+                                        onSubmit = { selectedItem ->
+                                            selectedMonth = selectedItem
+                                            expanded = false
+                                        }
+                                    )
+                                }
                             }
                         )
                     }
