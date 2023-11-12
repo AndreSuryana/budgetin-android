@@ -24,12 +24,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.andresuryana.budgetin.core.ui.component.BudgetinAppBar
+import com.andresuryana.budgetin.core.ui.component.BudgetinLogoAppBar
 import com.andresuryana.budgetin.core.ui.component.BudgetinNavigationBar
 import com.andresuryana.budgetin.core.ui.component.BudgetinNavigationItem
+import com.andresuryana.budgetin.core.ui.component.BudgetinTitleAppBar
 import com.andresuryana.budgetin.navigation.AppNavHost
 import com.andresuryana.budgetin.navigation.MainDestination
 import com.andresuryana.budgetin.navigation.MainDestination.HOME
+import com.andresuryana.budgetin.navigation.MainDestination.STATISTIC
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,12 +73,23 @@ fun MainScreen(
             // Show top app bar on main destination, except HOME destination has special top app bar
             val destination = state.currentMainDestination
             if (destination != null) {
-                if (destination == HOME) {
-                    // TODO: Show home top app bar
-                } else {
-                    BudgetinAppBar(
-                        title = stringResource(destination.titleRes)
-                    )
+                when (destination) {
+                    HOME -> BudgetinLogoAppBar()
+
+                    STATISTIC -> {
+                        BudgetinTitleAppBar(
+                            title = stringResource(destination.titleRes),
+                            trailingIcon = {
+                                // TODO: Dropdown here!
+                            }
+                        )
+                    }
+
+                    else -> {
+                        BudgetinTitleAppBar(
+                            title = stringResource(destination.titleRes)
+                        )
+                    }
                 }
             }
 
@@ -86,7 +99,7 @@ fun MainScreen(
 }
 
 @Composable
-fun BudgetinBottomBar(
+private fun BudgetinBottomBar(
     destinations: List<MainDestination>,
     onNavigate: (MainDestination) -> Unit,
     currentDestination: NavDestination?,
