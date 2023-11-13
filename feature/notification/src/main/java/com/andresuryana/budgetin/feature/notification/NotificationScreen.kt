@@ -1,10 +1,13 @@
 package com.andresuryana.budgetin.feature.notification
 
+import android.icu.text.SimpleDateFormat
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +33,8 @@ import com.andresuryana.budgetin.core.model.Notification
 import com.andresuryana.budgetin.core.ui.component.BudgetinItemIcon
 import com.andresuryana.budgetin.core.ui.component.BudgetinListItem
 import com.andresuryana.budgetin.core.ui.component.IconSize
+import java.util.Date
+import java.util.Locale
 
 @Composable
 internal fun NotificationRoute(
@@ -80,7 +86,18 @@ internal fun NotificationScreen(
             key = { it.uid }
         ) { notification ->
             BudgetinListItem(
-                title = { Text(text = notification.title) },
+                title = {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(modifier = Modifier.weight(1f), text = notification.title)
+                        Text(
+                            text = notification.timestamp.formatDate(),
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 12.sp
+                            )
+                        )
+                    }
+                },
                 description = {
                     Text(
                         text = notification.description,
@@ -122,3 +139,12 @@ internal fun BudgetinTextButtonSmall(
         )
     )
 }
+
+private fun Date.formatDate(pattern: String = "dd MMM yyyy") =
+    try {
+        val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+        sdf.format(this)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ""
+    }
