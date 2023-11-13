@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.andresuryana.budgetin.core.model.Notification
 import com.andresuryana.budgetin.core.ui.component.BudgetinItemIcon
@@ -116,6 +117,8 @@ internal fun BudgetinTextButtonSmall(
             )
             .padding(4.dp),
         text = text,
-        style = MaterialTheme.typography.titleSmall
+        style = MaterialTheme.typography.titleSmall.copy(
+            fontSize = 12.sp
+        )
     )
 }
