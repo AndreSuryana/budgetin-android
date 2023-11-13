@@ -16,9 +16,13 @@ android {
 }
 
 dependencies {
+    ui()
+    model()
+
     android()
     compose()
     testing()
     navigation()
+
     hilt()
 }

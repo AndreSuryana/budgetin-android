@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Title -->
     <string name="title_notification">Notification</string>
+
+    <!-- Button -->
+    <string name="btn_mark_all_read">Mark all as Read</string>
 </resources>
