@@ -91,7 +91,7 @@ private fun BudgetinTitleAppBarPreview() {
 object BudgetinAppBarDefaults {
 
     val AppBarPaddingValues: PaddingValues
-        get() = PaddingValues(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 16.dp)
+        get() = PaddingValues(start = 16.dp, top = 24.dp, end = 16.dp, bottom = 8.dp)
 
-    val FixedAppBarHeight: Dp = 80.dp
+    val FixedAppBarHeight: Dp = 72.dp
 }
