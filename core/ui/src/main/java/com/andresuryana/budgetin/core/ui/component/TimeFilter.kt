@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -46,11 +47,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.andresuryana.budgetin.core.ui.R
-import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.BackgroundColor
+import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.DropdownBackgroundColor
 import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.DropdownHeight
 import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.DropdownShape
 import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.DropdownTextFontWeight
 import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.DropdownTextStyle
+import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.SheetBackgroundColor
+import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.SheetHorizontalPadding
+import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.SheetRadioTextStyle
+import com.andresuryana.budgetin.core.ui.component.TimeFilterDefaults.SheetTitleStyle
 import com.andresuryana.budgetin.core.ui.theme.BudgetinTheme
 import kotlinx.coroutines.launch
 
@@ -60,7 +65,7 @@ fun TimeFilterDropdown(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     expanded: Boolean = false,
-    onExpanded: () -> Unit
+    onExpanded: () -> Unit,
 ) {
     val animatedAngle by animateFloatAsState(
         // Target value when state is expanded is set to negative to achieve
@@ -74,7 +79,7 @@ fun TimeFilterDropdown(
         modifier = modifier
             .height(DropdownHeight)
             .clip(DropdownShape)
-            .background(BackgroundColor)
+            .background(DropdownBackgroundColor)
             .clickable(
                 enabled = enabled,
                 role = Role.Button,
@@ -107,7 +112,7 @@ fun TimeFilterBottomSheet(
     modifier: Modifier = Modifier,
     title: String? = null,
     submitText: String = stringResource(R.string.btn_submit),
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 ) {
     BudgetinTheme {
         val scope = rememberCoroutineScope()
@@ -117,14 +122,18 @@ fun TimeFilterBottomSheet(
             modifier = modifier,
             onDismissRequest = onDismiss,
             sheetState = sheetState,
+            containerColor = SheetBackgroundColor
         ) {
             Column(
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.navigationBars)
-                    .padding(horizontal = 16.dp)
             ) {
                 title?.let {
-                    Text(text = it, style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        modifier = Modifier.padding(SheetHorizontalPadding),
+                        text = it,
+                        style = SheetTitleStyle
+                    )
                 }
                 items.forEach { item ->
                     Row(
@@ -135,17 +144,20 @@ fun TimeFilterBottomSheet(
                                 selected = item == selectedOption,
                                 onClick = { selectedOption = item },
                                 role = Role.RadioButton
-                            ),
+                            )
+                            .padding(SheetHorizontalPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(selected = item == selectedOption, onClick = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = item, style = MaterialTheme.typography.bodyMedium)
+                        Text(text = item, style = SheetRadioTextStyle)
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(SheetHorizontalPadding),
                     onClick = {
                         scope.launch { sheetState.hide() }
                             .invokeOnCompletion {
@@ -169,7 +181,7 @@ object TimeFilterDefaults {
 
     val DropdownShape: Shape = RoundedCornerShape(4.dp)
 
-    val BackgroundColor: Color
+    val DropdownBackgroundColor: Color
         @Composable
         get() = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
 
@@ -180,4 +192,18 @@ object TimeFilterDefaults {
     val DropdownTextFontWeight: FontWeight
         @Composable
         get() = FontWeight.Medium
+
+    val SheetBackgroundColor: Color
+        @Composable
+        get() = MaterialTheme.colorScheme.surface
+
+    val SheetTitleStyle: TextStyle
+        @Composable
+        get() = MaterialTheme.typography.titleLarge
+
+    val SheetRadioTextStyle: TextStyle
+        @Composable
+        get() = MaterialTheme.typography.bodyMedium
+
+    val SheetHorizontalPadding: PaddingValues = PaddingValues(horizontal = 16.dp)
 }
