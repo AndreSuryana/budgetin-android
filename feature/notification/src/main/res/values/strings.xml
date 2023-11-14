@@ -5,4 +5,5 @@
 
     <!-- Button -->
     <string name="btn_mark_all_read">Mark all as Read</string>
+    <string name="btn_ok">OK</string>
 </resources>
