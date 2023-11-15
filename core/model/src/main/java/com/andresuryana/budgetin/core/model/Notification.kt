@@ -1,19 +1,15 @@
 package com.andresuryana.budgetin.core.model
 
-import android.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import java.util.Date
 
 data class Notification(
-    val uid: String,
+    val id: String,
     val title: String,
     val description: String,
+    val viewed: Boolean,
     val timestamp: Date,
-    val isRead: Boolean = false,
-    val icon: NotificationIcon? = null,
+    val icon: Painter? = null,
 )
-
-data class NotificationIcon(
-    val icon: Painter,
-    val color: Color?,
-)
+// TODO: How can the 'icon: Painter' initialized using drawable resource name?
+// Because in the database icon are stored using its resource name.

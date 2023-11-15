@@ -1,6 +1,5 @@
 package com.andresuryana.budgetin.feature.notification
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,18 +9,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andresuryana.budgetin.core.model.Notification
 import com.andresuryana.budgetin.core.ui.component.BudgetinButton
 import com.andresuryana.budgetin.core.ui.component.BudgetinDialog
@@ -37,61 +32,74 @@ internal fun NotificationRoute(
     modifier: Modifier = Modifier,
     viewModel: NotificationViewModel = hiltViewModel(),
 ) {
-    val context = LocalContext.current
-    val notifications by viewModel.userNotifications.collectAsState()
+    val notificationUiState by viewModel.notificationUiState.collectAsStateWithLifecycle()
+    val detailUiState by viewModel.detailUiState.collectAsStateWithLifecycle()
 
     NotificationScreen(
         modifier = modifier,
-        notifications = notifications,
+        onShowNotification = { viewModel.showNotificationDialog(it) },
         onNotificationShowed = { notification ->
-            // TODO: Handle notification is showed, mark as read
-            Toast.makeText(context, "Notification '${notification.uid}' showed!", Toast.LENGTH_SHORT).show()
+            viewModel.notificationViewed(notification)
+            viewModel.dismissNotificationDialog()
         },
-        onReadAllClick = {
-            // TODO: Handle mark all as read
-            Toast.makeText(context, "Mark all as read!", Toast.LENGTH_SHORT).show()
-        }
+        onReadAllClick = { viewModel.markAllNotificationAsViewed() },
+        notificationUiState = notificationUiState,
+        detailUiState = detailUiState,
     )
 }
 
 @Composable
 internal fun NotificationScreen(
-    notifications: List<Notification>,
+    onShowNotification: (Notification) -> Unit,
     onNotificationShowed: (Notification) -> Unit,
     onReadAllClick: () -> Unit,
     modifier: Modifier = Modifier,
+    notificationUiState: NotificationUiState = NotificationUiState.Loading,
+    detailUiState: NotificationDetailUiState = NotificationDetailUiState.Hidden
 ) {
-    var showDialog by rememberSaveable { mutableStateOf(false) }
-
-    // Define callback that responsible handling notification detail dialog that has been
-    // shown to the user. This callback is reused in this composable.
-    val onNotificationShowCallback: (Notification) -> Unit = { notification ->
-        onNotificationShowed(notification)
-        showDialog = false
-    }
-
-    if (showDialog)
-        NotificationDetailDialog(
-            notification = notifications.first(),
-            onDialogClosed = onNotificationShowCallback
-        )
-
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 8.dp),
-        horizontalAlignment = Alignment.End
-    ) {
-        item {
-            BudgetinTextButtonSmall(
-                text = stringResource(R.string.btn_mark_all_read),
-                onClick = onReadAllClick
-            )
+    when (notificationUiState) {
+        NotificationUiState.Empty -> {
+            // TODO: Implement an empty screen or icon
         }
 
-        loadNotifications(
-            notifications = notifications,
-            onClick = { showDialog = true }
-        )
+        NotificationUiState.LoadFailed -> {
+            // TODO: Implement an empty screen or icon and show snackbar error
+        }
+
+        NotificationUiState.Loading -> {
+            // TODO: Implement loading screen
+        }
+
+        is NotificationUiState.Success -> {
+            // Handling the detail ui state to show notification detail dialog if detailUiState
+            // is ShowDialog, otherwise do nothing.
+            when (detailUiState) {
+                is NotificationDetailUiState.ShowDialog -> NotificationDetailDialog(
+                    notification = detailUiState.notification,
+                    onDialogClosed = onNotificationShowed
+                )
+
+                else -> Unit
+            }
+
+            LazyColumn(
+                modifier = modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 8.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                item {
+                    BudgetinTextButtonSmall(
+                        text = stringResource(R.string.btn_mark_all_read),
+                        onClick = onReadAllClick
+                    )
+                }
+
+                loadNotifications(
+                    notifications = notificationUiState.notifications,
+                    onClick = onShowNotification
+                )
+            }
+        }
     }
 }
 
@@ -101,7 +109,7 @@ internal fun LazyListScope.loadNotifications(
 ) {
     items(
         items = notifications,
-        key = { it.uid }
+        key = { it.id }
     ) { notification ->
         BudgetinListItem(
             title = {

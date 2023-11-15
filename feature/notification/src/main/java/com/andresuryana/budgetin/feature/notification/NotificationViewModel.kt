@@ -1,26 +1,69 @@
 package com.andresuryana.budgetin.feature.notification
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.andresuryana.budgetin.core.common.result.Result
+import com.andresuryana.budgetin.core.common.result.asResult
+import com.andresuryana.budgetin.core.data.repository.UserNotificationRepository
 import com.andresuryana.budgetin.core.model.Notification
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.Calendar
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NotificationViewModel @Inject constructor() : ViewModel() {
+class NotificationViewModel @Inject constructor(
+    private val userNotificationRepository: UserNotificationRepository
+) : ViewModel() {
 
-    val userNotifications: StateFlow<List<Notification>> =
-        MutableStateFlow(
-            List(100) { i ->
-                Notification(
-                    uid = "NTF-${i + 1}",
-                    title = "Notification ${i + 1}",
-                    description = "Lorem ipsum dolor sit amet, consectetur  sed do adipiscing elit, eiusmod tempor incididunt",
-                    timestamp = Calendar.getInstance().time
-                )
-            }
-        ).asStateFlow()
+    val notificationUiState: StateFlow<NotificationUiState> =
+        userNotificationRepository.getNotifications()
+            .asResult()
+            .map { result ->
+                when (result) {
+                    is Result.Success -> NotificationUiState.Success(
+                        notifications = result.data
+                    )
+
+                    is Result.Error -> NotificationUiState.LoadFailed
+
+                    is Result.Loading -> NotificationUiState.Loading
+                }
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = NotificationUiState.Loading
+            )
+
+    private val _detailUiState =
+        MutableStateFlow<NotificationDetailUiState>(NotificationDetailUiState.Hidden)
+    val detailUiState = _detailUiState.asStateFlow()
+
+    fun notificationViewed(notification: Notification) {
+        viewModelScope.launch {
+            userNotificationRepository.updateNotificationViewedStatus(
+                notificationId = notification.id,
+                viewed = true
+            )
+        }
+    }
+
+    fun markAllNotificationAsViewed() {
+        viewModelScope.launch {
+            userNotificationRepository.updateAllNotificationViewedStatus(true)
+        }
+    }
+
+    fun showNotificationDialog(notification: Notification) {
+        _detailUiState.value = NotificationDetailUiState.ShowDialog(notification)
+    }
+
+    fun dismissNotificationDialog() {
+        _detailUiState.value = NotificationDetailUiState.Hidden
+    }
 }
