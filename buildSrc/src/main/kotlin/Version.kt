@@ -18,7 +18,7 @@ object Version {
     const val jUnitAndroidTest = "1.1.5"
     const val espresso = "3.5.1"
 
-    const val hilt = "2.44"
+    const val hilt = "2.48"
     const val hiltNavigation = "1.0.0"
     const val room = "2.6.0"
     const val retrofit = "2.9.0"

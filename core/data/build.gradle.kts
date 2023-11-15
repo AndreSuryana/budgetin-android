@@ -1,6 +1,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("kotlin-kapt")
 }
 
 android {
@@ -10,9 +12,16 @@ android {
     configureDefaultConfig(defaultConfig)
 
     configureJvmVersion(compileOptions, kotlinOptions, kotlin)
+
+    hilt {
+        enableAggregatingTask = false
+    }
 }
 
 dependencies {
+    model()
+
     android()
+    hilt()
     testing()
 }

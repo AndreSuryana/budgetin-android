@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("dagger.hilt.android.plugin")
-    kotlin("kapt")
+    id("kotlin-kapt")
 }
 
 android {
@@ -45,6 +45,8 @@ android {
 dependencies {
 
     ui()
+    data()
+    database()
 
     home()
     search()
