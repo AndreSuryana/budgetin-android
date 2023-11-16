@@ -1,6 +1,7 @@
 package com.andresuryana.budgetin.core.data.di
 
 import com.andresuryana.budgetin.core.data.fake.FakeUserNotificationRepository
+import com.andresuryana.budgetin.core.data.repository.UserNotificationRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,5 +12,6 @@ import dagger.hilt.components.SingletonComponent
 object DataModule {
 
     @Provides
-    fun provideUserNotificationRepository() = FakeUserNotificationRepository()
+    fun provideUserNotificationRepository(): UserNotificationRepository =
+        FakeUserNotificationRepository()
 }
