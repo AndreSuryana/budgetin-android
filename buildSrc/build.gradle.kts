@@ -18,4 +18,9 @@ dependencies {
         name = "kotlin-gradle-plugin",
         version = "1.9.10"
     )
+
+    // Added javapoet dependency for Dagger Hilt. Because we configure dependencies using
+    // buildScr folder, javapoet implementation is required here. Otherwise, we run into missing
+    // javapoet dependency in compilation process.
+    implementation("com.squareup:javapoet:1.13.0")
 }
