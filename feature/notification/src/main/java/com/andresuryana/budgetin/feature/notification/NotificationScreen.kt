@@ -1,20 +1,42 @@
 package com.andresuryana.budgetin.feature.notification
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,9 +46,11 @@ import com.andresuryana.budgetin.core.ui.component.BudgetinDialog
 import com.andresuryana.budgetin.core.ui.component.BudgetinItemIcon
 import com.andresuryana.budgetin.core.ui.component.BudgetinListItem
 import com.andresuryana.budgetin.core.ui.component.IconSize
+import com.andresuryana.budgetin.feature.notification.NotificationScreenDefaults.NotificationHeight
 import com.andresuryana.budgetin.feature.notification.component.BudgetinTextButtonSmall
 import com.andresuryana.budgetin.feature.notification.component.NotificationDescription
 import com.andresuryana.budgetin.feature.notification.component.NotificationTitleWithDate
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun NotificationRoute(
@@ -101,36 +125,97 @@ internal fun NotificationScreenBody(
         else -> Unit
     }
 
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        val scope = rememberCoroutineScope()
+        val density = LocalDensity.current
+        val listState = rememberLazyListState()
+
+        val notificationItemHeight = NotificationHeight
+        var markReadButtonHeight by remember { mutableFloatStateOf(0f) }
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 8.dp),
-            horizontalAlignment = Alignment.End
+            horizontalAlignment = Alignment.End,
+            state = listState
         ) {
             item {
                 BudgetinTextButtonSmall(
                     text = stringResource(R.string.btn_mark_all_read),
-                    onClick = onReadAllClick
+                    onClick = onReadAllClick,
+                    modifier = Modifier.onGloballyPositioned {
+                        markReadButtonHeight = with(density) { it.size.height.dp.toPx() }
+                    }
                 )
             }
 
             loadNotifications(
                 notifications = notifications,
-                onClick = onShowNotification
+                onClick = onShowNotification,
+                modifier = Modifier.height(height = notificationItemHeight)
             )
+        }
+
+        val showScrollTop by remember {
+            // Here we specified scroll to top button visibility by checking the first visible
+            // item index. Because we have 'Mark all as Read' text button as first item on the
+            // list then it means index 1 is the first item on the list.
+            derivedStateOf { listState.firstVisibleItemIndex > 1 }
+        }
+        AnimatedVisibility(
+            visible = showScrollTop,
+            enter = fadeIn() + scaleIn(spring(dampingRatio = Spring.DampingRatioMediumBouncy)),
+            exit = fadeOut() + scaleOut(),
+        ) {
+            val itemSizePx = with(LocalDensity.current) { notificationItemHeight.toPx() }
+            IconButton(
+                onClick = {
+                    scope.launch {
+                        // Achieve smooth scrolling by calculating item height with item count to
+                        // scrolls. Additional px are added if the first item index is even number,
+                        // this is workaround solution to prevent scroll isn't go fully to top.
+                        val additionalPx =
+                            if (listState.firstVisibleItemIndex % 2 == 0) markReadButtonHeight
+                            else 0f
+                        val scrollTopByPx =
+                            listState.firstVisibleItemIndex * itemSizePx + additionalPx
+                        listState.animateScrollBy(
+                            value = -scrollTopByPx,
+                            animationSpec = spring(stiffness = Spring.StiffnessVeryLow)
+                        )
+                    }
+                },
+                colors = IconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f),
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f),
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_arrow_up),
+                    contentDescription = null,
+                )
+            }
         }
     }
 }
 
 internal fun LazyListScope.loadNotifications(
     notifications: List<Notification>,
-    onClick: (Notification) -> Unit
+    onClick: (Notification) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     items(
         items = notifications,
         key = { it.id }
     ) { notification ->
         BudgetinListItem(
+            modifier = modifier,
             title = {
                 NotificationTitleWithDate(
                     modifier = Modifier.fillMaxWidth(),
@@ -184,4 +269,12 @@ internal fun NotificationDetailDialog(
             }
         }
     )
+}
+
+/**
+ * Default properties for the Notification Screen components.
+ */
+object NotificationScreenDefaults {
+
+    val NotificationHeight: Dp = 76.dp
 }
