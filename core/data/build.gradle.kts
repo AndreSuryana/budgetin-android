@@ -12,10 +12,6 @@ android {
     configureDefaultConfig(defaultConfig)
 
     configureJvmVersion(compileOptions, kotlinOptions, kotlin)
-
-    hilt {
-        enableAggregatingTask = false
-    }
 }
 
 dependencies {
