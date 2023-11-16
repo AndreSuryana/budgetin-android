@@ -1,5 +1,6 @@
 package com.andresuryana.budgetin.feature.notification
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,14 +30,13 @@ import com.andresuryana.budgetin.feature.notification.component.NotificationTitl
 
 @Composable
 internal fun NotificationRoute(
-    modifier: Modifier = Modifier,
     viewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val notificationUiState by viewModel.notificationUiState.collectAsStateWithLifecycle()
     val detailUiState by viewModel.detailUiState.collectAsStateWithLifecycle()
 
     NotificationScreen(
-        modifier = modifier,
+        modifier = Modifier.fillMaxWidth(),
         onShowNotification = { viewModel.showNotificationDialog(it) },
         onNotificationShowed = { notification ->
             viewModel.notificationViewed(notification)
@@ -70,35 +70,54 @@ internal fun NotificationScreen(
             // TODO: Implement loading screen
         }
 
-        is NotificationUiState.Success -> {
-            // Handling the detail ui state to show notification detail dialog if detailUiState
-            // is ShowDialog, otherwise do nothing.
-            when (detailUiState) {
-                is NotificationDetailUiState.ShowDialog -> NotificationDetailDialog(
-                    notification = detailUiState.notification,
-                    onDialogClosed = onNotificationShowed
-                )
+        is NotificationUiState.Success -> NotificationScreenBody(
+            onShowNotification = onShowNotification,
+            onNotificationShowed = onNotificationShowed,
+            onReadAllClick = onReadAllClick,
+            notifications = notificationUiState.notifications,
+            modifier = modifier,
+            detailUiState = detailUiState,
+        )
+    }
+}
 
-                else -> Unit
+@Composable
+internal fun NotificationScreenBody(
+    onShowNotification: (Notification) -> Unit,
+    onNotificationShowed: (Notification) -> Unit,
+    onReadAllClick: () -> Unit,
+    notifications: List<Notification>,
+    modifier: Modifier = Modifier,
+    detailUiState: NotificationDetailUiState = NotificationDetailUiState.Hidden
+) {
+    // Handling the detail ui state to show notification detail dialog if detailUiState
+    // is ShowDialog, otherwise do nothing.
+    when (detailUiState) {
+        is NotificationDetailUiState.ShowDialog -> NotificationDetailDialog(
+            notification = detailUiState.notification,
+            onDialogClosed = onNotificationShowed
+        )
+
+        else -> Unit
+    }
+
+    Box(modifier = modifier) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 8.dp),
+            horizontalAlignment = Alignment.End
+        ) {
+            item {
+                BudgetinTextButtonSmall(
+                    text = stringResource(R.string.btn_mark_all_read),
+                    onClick = onReadAllClick
+                )
             }
 
-            LazyColumn(
-                modifier = modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 8.dp),
-                horizontalAlignment = Alignment.End
-            ) {
-                item {
-                    BudgetinTextButtonSmall(
-                        text = stringResource(R.string.btn_mark_all_read),
-                        onClick = onReadAllClick
-                    )
-                }
-
-                loadNotifications(
-                    notifications = notificationUiState.notifications,
-                    onClick = onShowNotification
-                )
-            }
+            loadNotifications(
+                notifications = notifications,
+                onClick = onShowNotification
+            )
         }
     }
 }
