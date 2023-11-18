@@ -65,12 +65,9 @@ internal fun NotificationRoute(
 
     NotificationScreen(
         modifier = Modifier.fillMaxWidth(),
-        onShowNotification = { viewModel.showNotificationDialog(it) },
-        onNotificationShowed = { notification ->
-            viewModel.notificationViewed(notification)
-            viewModel.dismissNotificationDialog()
-        },
-        onReadAllClick = { viewModel.markAllNotificationAsViewed() },
+        onShowNotification = viewModel::showNotificationDialog,
+        onNotificationShowed = viewModel::notificationViewed,
+        onReadAllClick = viewModel::markAllNotificationAsViewed,
         notificationUiState = notificationUiState,
         detailUiState = detailUiState,
     )

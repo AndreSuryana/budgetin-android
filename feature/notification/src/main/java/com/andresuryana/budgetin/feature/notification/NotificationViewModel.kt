@@ -46,16 +46,25 @@ class NotificationViewModel @Inject constructor(
 
     fun notificationViewed(notification: Notification) {
         viewModelScope.launch {
-            userNotificationRepository.updateNotificationViewedStatus(
-                notificationId = notification.id,
-                viewed = true
-            )
+            try {
+                userNotificationRepository.updateNotificationViewedStatus(
+                    notificationId = notification.id,
+                    viewed = true
+                )
+                dismissNotificationDialog()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     fun markAllNotificationAsViewed() {
         viewModelScope.launch {
-            userNotificationRepository.updateAllNotificationViewedStatus(true)
+            try {
+                userNotificationRepository.updateAllNotificationViewedStatus(true)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -63,7 +72,7 @@ class NotificationViewModel @Inject constructor(
         _detailUiState.value = NotificationDetailUiState.ShowDialog(notification)
     }
 
-    fun dismissNotificationDialog() {
+    private fun dismissNotificationDialog() {
         _detailUiState.value = NotificationDetailUiState.Hidden
     }
 }
