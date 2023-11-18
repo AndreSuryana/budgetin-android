@@ -32,6 +32,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -47,6 +49,8 @@ import com.andresuryana.budgetin.core.ui.component.BudgetinItemIcon
 import com.andresuryana.budgetin.core.ui.component.BudgetinListItem
 import com.andresuryana.budgetin.core.ui.component.IconSize
 import com.andresuryana.budgetin.feature.notification.NotificationScreenDefaults.NotificationHeight
+import com.andresuryana.budgetin.feature.notification.NotificationScreenDefaults.getNotificationIcon
+import com.andresuryana.budgetin.feature.notification.NotificationScreenDefaults.getNotificationIconColor
 import com.andresuryana.budgetin.feature.notification.component.BudgetinTextButtonSmall
 import com.andresuryana.budgetin.feature.notification.component.NotificationDescription
 import com.andresuryana.budgetin.feature.notification.component.NotificationTitleWithDate
@@ -232,8 +236,8 @@ internal fun LazyListScope.loadNotifications(
             onClick = { onClick(notification) },
             leadingIcon = {
                 BudgetinItemIcon(
-                    icon = painterResource(R.drawable.ic_notification_active),
-                    color = MaterialTheme.colorScheme.primary,
+                    icon = getNotificationIcon(notification.viewed),
+                    color = getNotificationIconColor(notification.viewed),
                     iconSize = IconSize.LARGE
                 )
             }
@@ -277,4 +281,14 @@ internal fun NotificationDetailDialog(
 object NotificationScreenDefaults {
 
     val NotificationHeight: Dp = 76.dp
+
+    @Composable
+    fun getNotificationIcon(viewed: Boolean): Painter =
+        if (viewed) painterResource(R.drawable.ic_notification)
+        else painterResource(R.drawable.ic_notification_active)
+
+    @Composable
+    fun getNotificationIconColor(viewed: Boolean): Color =
+        if (viewed) MaterialTheme.colorScheme.secondary
+        else MaterialTheme.colorScheme.primary
 }
