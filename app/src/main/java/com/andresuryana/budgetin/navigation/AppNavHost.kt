@@ -28,7 +28,9 @@ fun AppNavHost(
         enterTransition = { fadeIn(animationSpec = tween(200)) },
         exitTransition = { fadeOut(animationSpec = tween(200)) }
     ) {
-        homeScreen()
+        homeScreen(
+            onSearchClick = state::navigateToSearch
+        )
         statisticScreen()
         notificationScreen()
         settingScreen()

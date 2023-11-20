@@ -23,4 +23,6 @@ object Version {
     const val room = "2.6.0"
     const val retrofit = "2.9.0"
     const val okHttp = "5.0.0-alpha.11"
+
+    const val coil = "2.5.0"
 }

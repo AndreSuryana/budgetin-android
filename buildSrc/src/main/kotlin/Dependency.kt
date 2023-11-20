@@ -36,6 +36,8 @@ object Dependency {
     const val okHttp = "com.squareup.okhttp3:okhttp:${Version.okHttp}"
     const val okHttpLoggingInterceptor =
         "com.squareup.okhttp3:logging-interceptor:${Version.okHttp}"
+
+    const val coil = "io.coil-kt:coil-compose:${Version.coil}"
 }
 
 fun DependencyHandler.android() {
@@ -101,4 +103,8 @@ fun DependencyHandler.retrofit() {
         Dependency.okHttp,
         Dependency.okHttpLoggingInterceptor
     )
+}
+
+fun DependencyHandler.coil() {
+    implementation(Dependency.coil)
 }
